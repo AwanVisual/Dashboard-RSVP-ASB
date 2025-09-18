@@ -241,7 +241,7 @@ const App = () => {
         </main>
 
         <footer className="text-center mt-8 text-sm text-gray-500">
-          <p>Dasbor terhubung dengan Supabase.</p>
+          <p>Dasbor terhubung dengan Undangan Grand Opening ASB.</p>
         </footer>
       </div>
     </div>
