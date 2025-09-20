@@ -64,7 +64,6 @@ const App = () => {
     if (!supabase) return;
 
     const fetchResponses = async () => {
-      // Tidak mengatur loading di sini agar spinner utama tidak berkedip saat realtime update
       setError(null);
       try {
         const { data, error } = await supabase
@@ -77,7 +76,6 @@ const App = () => {
         console.error("Error fetching data:", err);
         setError(`Gagal mengambil data: ${err.message}.`);
       } finally {
-        // Loading dihentikan hanya setelah pengambilan data awal selesai
         if(loading){
            setLoading(false);
         }
@@ -154,17 +152,27 @@ const App = () => {
     </div>
   );
 
+  const StatusBadge = ({ willAttend }) => (
+    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+      willAttend
+        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+    }`}>
+      {willAttend ? 'Ya' : 'Tidak'}
+    </span>
+  );
+
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen font-sans text-gray-800 dark:text-gray-200">
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         <header className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Dasbor Respons RSVP</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Menampilkan data langsung dari database Supabase Anda.</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white text-center sm:text-left">Dasbor Respons RSVP</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2 text-center sm:text-left">Menampilkan data langsung dari database Supabase Anda.</p>
         </header>
 
         <main className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
           <div className="p-4 flex flex-col sm:flex-row justify-between items-center border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2 sm:mb-0">Data Respons</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 sm:mb-0">Data Respons</h2>
             <div className="flex space-x-2">
               <button
                 onClick={handleExportExcel}
@@ -180,7 +188,7 @@ const App = () => {
               </button>
             </div>
           </div>
-          <div className="overflow-x-auto">
+          <div>
             {loading ? (
               <LoadingSpinner />
             ) : error ? (
@@ -194,51 +202,70 @@ const App = () => {
                 <p className="text-sm mt-1">Data akan muncul di sini setelah ada yang mengisi RSVP.</p>
               </div>
             ) : (
-              <table className="w-full text-sm text-left">
-                <thead className="bg-gray-50 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">Nama</th>
-                    <th scope="col" className="px-6 py-3">Akan Hadir?</th>
-                    <th scope="col" className="px-6 py-3">Jumlah Tamu</th>
-                    <th scope="col" className="px-6 py-3">Kontak</th>
-                    <th scope="col" className="px-6 py-3">Pesan</th>
-                    <th scope="col" className="px-6 py-3">Waktu Kedatangan</th>
-                    <th scope="col" className="px-6 py-3">Waktu Kirim</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
-                  {responses.map((rsvp) => (
-                    <tr key={rsvp.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
-                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">{rsvp.name}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          rsvp.will_attend
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        }`}>
-                          {rsvp.will_attend ? 'Ya' : 'Tidak'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">{rsvp.number_of_guests}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span>{rsvp.email || '-'}</span>
-                          <span className="text-xs text-gray-500">{rsvp.phone || '-'}</span>
+              <div>
+                {/* Tampilan Tabel untuk Desktop (md ke atas) */}
+                <div className="hidden md:block overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-50 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        <tr>
+                            <th scope="col" className="px-6 py-3">Nama</th>
+                            <th scope="col" className="px-6 py-3">Akan Hadir?</th>
+                            <th scope="col" className="px-6 py-3">Jumlah Tamu</th>
+                            <th scope="col" className="px-6 py-3">Kontak</th>
+                            <th scope="col" className="px-6 py-3">Pesan</th>
+                            <th scope="col" className="px-6 py-3">Waktu Kedatangan</th>
+                            <th scope="col" className="px-6 py-3">Waktu Kirim</th>
+                        </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
+                        {responses.map((rsvp) => (
+                            <tr key={rsvp.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
+                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">{rsvp.name}</td>
+                            <td className="px-6 py-4"><StatusBadge willAttend={rsvp.will_attend} /></td>
+                            <td className="px-6 py-4 text-center">{rsvp.number_of_guests}</td>
+                            <td className="px-6 py-4">
+                                <div className="flex flex-col">
+                                <span>{rsvp.email || '-'}</span>
+                                <span className="text-xs text-gray-500">{rsvp.phone || '-'}</span>
+                                </div>
+                            </td>
+                            <td className="px-6 py-4 max-w-xs truncate" title={rsvp.message}>
+                                {rsvp.message || <span className="text-gray-400 italic">Tidak ada pesan</span>}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-500 dark:text-gray-400">
+                                {rsvp.arrival_time || <span className="text-gray-400 italic">N/A</span>}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-500 dark:text-gray-400">
+                                {new Date(rsvp.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                            </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Tampilan Kartu untuk Mobile (di bawah md) */}
+                <div className="md:hidden p-4 space-y-4">
+                    {responses.map((rsvp) => (
+                        <div key={rsvp.id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow p-4 space-y-3">
+                            <div className="flex justify-between items-start">
+                                <span className="font-bold text-lg text-gray-900 dark:text-white">{rsvp.name}</span>
+                                <StatusBadge willAttend={rsvp.will_attend} />
+                            </div>
+                            <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
+                                <p><strong>Jumlah Tamu:</strong> {rsvp.number_of_guests}</p>
+                                <p><strong>Waktu Kedatangan:</strong> {rsvp.arrival_time || 'N/A'}</p>
+                                <p><strong>Email:</strong> {rsvp.email || '-'}</p>
+                                <p><strong>Telepon:</strong> {rsvp.phone || '-'}</p>
+                                {rsvp.message && <p className="pt-1 border-t border-gray-200 dark:border-gray-600"><strong>Pesan:</strong> {rsvp.message}</p>}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 text-right pt-2 border-t border-gray-200 dark:border-gray-600">
+                                {new Date(rsvp.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                            </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 max-w-xs truncate" title={rsvp.message}>
-                        {rsvp.message || <span className="text-gray-400 italic">Tidak ada pesan</span>}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-500 dark:text-gray-400">
-                        {rsvp.arrival_time || <span className="text-gray-400 italic">N/A</span>}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-500 dark:text-gray-400">
-                        {new Date(rsvp.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                    ))}
+                </div>
+              </div>
             )}
             <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400">
               Total Respons: <span className="font-semibold text-gray-700 dark:text-gray-200">{responses.length}</span>
@@ -255,6 +282,4 @@ const App = () => {
 };
 
 export default App;
-
-
 
