@@ -110,6 +110,7 @@ const App = () => {
         'Nama': r.name,
         'Akan Hadir': r.will_attend ? 'Ya' : 'Tidak',
         'Jumlah Tamu': r.number_of_guests,
+        'Waktu Kedatangan': r.arrival_time || 'N/A',
         'Email': r.email,
         'Telepon': r.phone,
         'Pesan': r.message,
@@ -129,11 +130,12 @@ const App = () => {
     const doc = new window.jspdf.jsPDF();
     doc.text("Daftar Respons RSVP", 14, 16);
     doc.autoTable({
-      head: [['Nama', 'Hadir?', 'Tamu', 'Email', 'Telepon', 'Waktu Kirim']],
+      head: [['Nama', 'Hadir?', 'Tamu', 'Waktu Kedatangan', 'Email', 'Telepon', 'Waktu Kirim']],
       body: responses.map(r => [
         r.name,
         r.will_attend ? 'Ya' : 'Tidak',
         r.number_of_guests,
+        r.arrival_time || 'N/A',
         r.email || '-',
         r.phone || '-',
         new Date(r.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })
@@ -157,7 +159,7 @@ const App = () => {
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         <header className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Dasbor Respons RSVP</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Data RSVP Grand Opening Alam Sanitary Bali .</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Menampilkan data langsung dari database Supabase Anda.</p>
         </header>
 
         <main className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
@@ -200,6 +202,7 @@ const App = () => {
                     <th scope="col" className="px-6 py-3">Jumlah Tamu</th>
                     <th scope="col" className="px-6 py-3">Kontak</th>
                     <th scope="col" className="px-6 py-3">Pesan</th>
+                    <th scope="col" className="px-6 py-3">Waktu Kedatangan</th>
                     <th scope="col" className="px-6 py-3">Waktu Kirim</th>
                   </tr>
                 </thead>
@@ -227,6 +230,9 @@ const App = () => {
                         {rsvp.message || <span className="text-gray-400 italic">Tidak ada pesan</span>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-500 dark:text-gray-400">
+                        {rsvp.arrival_time || <span className="text-gray-400 italic">N/A</span>}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-500 dark:text-gray-400">
                         {new Date(rsvp.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
                       </td>
                     </tr>
@@ -241,7 +247,7 @@ const App = () => {
         </main>
 
         <footer className="text-center mt-8 text-sm text-gray-500">
-          <p>Dasbor terhubung dengan Undangan Grand Opening ASB.</p>
+          <p>Dasbor terhubung dengan Supabase.</p>
         </footer>
       </div>
     </div>
@@ -249,4 +255,6 @@ const App = () => {
 };
 
 export default App;
+
+
 
