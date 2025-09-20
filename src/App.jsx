@@ -166,7 +166,7 @@ const App = () => {
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen font-sans text-gray-800 dark:text-gray-200">
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         <header className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white text-center sm:text-left">Dasboard Respons RSVP</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white text-center sm:text-left">Dashboard Respons RSVP</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2 text-center sm:text-left">Menampilkan data langsung dari database Supabase Anda.</p>
         </header>
 
@@ -274,7 +274,7 @@ const App = () => {
         </main>
 
         <footer className="text-center mt-8 text-sm text-gray-500">
-          <p>Dasboard terhubung dengan Invitation Grand Opening ASB.</p>
+          <p>Dashboard terhubung dengan Invitation Grand Opening ASB.</p>
         </footer>
       </div>
     </div>
